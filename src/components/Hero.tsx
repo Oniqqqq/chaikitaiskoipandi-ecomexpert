@@ -90,11 +90,9 @@ export function Hero() {
         <div className="hero-copy">
           <p className="eyebrow">Магазин и чайные</p>
           <h1 className="display">
-            Китайский чай,
-            <br />
-            который легко
-            <br />
-            выбрать
+            <span>Китайский чай,</span>
+            <span>который легко</span>
+            <span>выбрать</span>
           </h1>
           <p className="hero-lead">
             Поможем найти свой вкус, привезём домой или заварим в одной из наших чайных.

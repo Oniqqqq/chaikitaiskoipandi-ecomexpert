@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { IconArrowShort } from "./Icons";
 
 const STEPS = [
@@ -20,61 +19,15 @@ const STEPS = [
 ];
 
 function PandaRoad() {
-  const ref = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const video = ref.current;
-    if (!video) return;
-
-    let raf = 0;
-    let last = 0;
-    let reversing = false;
-
-    const reverse = (now: number) => {
-      if (!last) last = now;
-      const next = video.currentTime - Math.min(0.05, (now - last) / 1000);
-      last = now;
-      if (next <= 0.02) {
-        reversing = false;
-        video.currentTime = 0;
-        void video.play();
-        return;
-      }
-      video.currentTime = next;
-      raf = requestAnimationFrame(reverse);
-    };
-
-    const onEnded = () => {
-      reversing = true;
-      last = 0;
-      video.pause();
-      raf = requestAnimationFrame(reverse);
-    };
-
-    const play = () => {
-      if (!reversing) void video.play().catch(() => undefined);
-    };
-
-    video.loop = false;
-    video.addEventListener("ended", onEnded);
-    video.addEventListener("canplay", play);
-    play();
-
-    return () => {
-      video.removeEventListener("ended", onEnded);
-      video.removeEventListener("canplay", play);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-
   return (
     <div className="sub-visual" aria-hidden>
       <video
-        ref={ref}
         className="sub-video"
-        src="/videos/panda-truck.mp4"
+        src="/videos/panda-truck.mp4?v=pong"
         poster="/videos/panda-truck.jpg"
+        autoPlay
         muted
+        loop
         playsInline
         preload="auto"
         disablePictureInPicture
