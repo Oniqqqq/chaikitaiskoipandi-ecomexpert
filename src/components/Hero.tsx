@@ -1,49 +1,46 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { formatPrice, heroSlides } from "../data/site";
-import { useMedia } from "../hooks/useMedia";
-import { IconArrow } from "./Icons";
+import { IconArrow, IconArrowShort } from "./Icons";
 import { WaterField } from "./WaterField";
 
-function pose(index: number, active: number, compact: boolean) {
-  const n = heroSlides.length;
-  const rel = ((index - active) % n + n) % n;
-  const angles = compact ? [-88, -132, -44, 10] : [-70, -112, -36, 10];
-  const scales = [1, 0.78, 0.6, 0.76];
-  const zs = [5, 2, 1, 3];
-  const rad = (angles[rel] * Math.PI) / 180;
-  return {
-    left: `${(compact ? 50 : 54) + Math.cos(rad) * (compact ? 32 : 40)}%`,
-    top: `${(compact ? 42 : 76) + Math.sin(rad) * (compact ? 24 : 34)}%`,
-    scale: scales[rel],
-    zIndex: zs[rel],
-    opacity: rel === 2 ? 0.78 : 1,
-  };
-}
+const orbit = {
+  enter: (dir: number) => ({
+    x: dir > 0 ? 340 : -340,
+    y: 150,
+    scale: 0.46,
+    opacity: 0,
+    rotate: dir > 0 ? 12 : -12,
+  }),
+  center: {
+    x: 0,
+    y: 0,
+    scale: 1,
+    opacity: 1,
+    rotate: 0,
+  },
+  exit: (dir: number) => ({
+    x: dir > 0 ? -340 : 340,
+    y: 170,
+    scale: 0.42,
+    opacity: 0,
+    rotate: dir > 0 ? -14 : 14,
+  }),
+};
 
-function Cake({
-  src,
-  active,
-  onSelect,
-}: {
-  src: string;
-  active: boolean;
-  onSelect: () => void;
-}) {
+function Cake({ src }: { src: string }) {
   const [tilt, setTilt] = useState({ x: 0, y: 0, lift: 0 });
 
   return (
-    <button
-      className={`cake${active ? " is-active" : ""}`}
-      onClick={onSelect}
+    <div
+      className="cake is-active"
       onMouseMove={(e) => {
         const r = e.currentTarget.getBoundingClientRect();
         const px = (e.clientX - r.left) / r.width;
         const py = (e.clientY - r.top) / r.height;
-        setTilt({ x: (0.5 - py) * 7, y: (px - 0.5) * 8, lift: 6 });
+        setTilt({ x: (0.5 - py) * 6, y: (px - 0.5) * 7, lift: 5 });
       }}
       onMouseLeave={() => setTilt({ x: 0, y: 0, lift: 0 })}
-      aria-label="Выбрать чай"
     >
       <div
         className="cake-visual"
@@ -55,37 +52,43 @@ function Cake({
         <img src={src} alt="" />
         <i className="cake-glare" />
       </div>
-    </button>
+    </div>
+  );
+}
+
+function Caption({ slide }: { slide: (typeof heroSlides)[number] }) {
+  return (
+    <a className="hero-product" href={slide.href}>
+      <div className="cat">{slide.category}</div>
+      <h2>{slide.product}</h2>
+      <p>
+        {slide.taste}. {slide.note}
+      </p>
+      <span className="price">
+        от {formatPrice(slide.priceFrom)}
+        <IconArrowShort />
+      </span>
+    </a>
   );
 }
 
 export function Hero() {
-  const [active, setActive] = useState(0);
+  const [[active, direction], setSlide] = useState([2, 1]);
   const [pulse, setPulse] = useState(0);
   const slide = heroSlides[active];
-  const compact = useMedia("(max-width: 1100px)");
 
   const go = (dir: 1 | -1) => {
-    setActive((i) => (i + dir + heroSlides.length) % heroSlides.length);
+    setSlide([ (active + dir + heroSlides.length) % heroSlides.length, dir ]);
     setPulse((n) => n + 1);
   };
 
-  const poses = useMemo(
-    () => heroSlides.map((_, i) => pose(i, active, compact)),
-    [active, compact],
-  );
-
   return (
-    <section
-      className="hero"
-      id="top"
-      style={{ ["--tint" as string]: slide.tint }}
-    >
+    <section className="hero" id="top" style={{ ["--tint" as string]: slide.tint }}>
       <div className="hero-tint" />
       <WaterField pulse={pulse} tint={slide.tint} />
       <div className="wrap hero-grid">
         <div className="hero-copy">
-          <p className="kicker">Магазин и чайные</p>
+          <p className="eyebrow">Магазин и чайные</p>
           <h1 className="display">
             Китайский чай,
             <br />
@@ -98,7 +101,7 @@ export function Hero() {
           </p>
           <div className="hero-cta">
             <a className="btn btn-primary" href="#quiz">
-              Подобрать чай за минуту
+              Подобрать чай за минуту <IconArrowShort />
             </a>
             <a className="btn btn-ghost" href="#catalog">
               Смотреть каталог
@@ -106,40 +109,36 @@ export function Hero() {
           </div>
           <AnimatePresence mode="wait">
             <motion.aside
-              key={`${slide.id}-mobile`}
+              key={`${slide.id}-flow`}
               className="hero-caption hero-caption-flow"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.35 }}
             >
-              <div className="cat">{slide.category}</div>
-              <h2 className="display">{slide.product}</h2>
-              <p>{slide.taste}. {slide.note}</p>
-              <div className="price">от {formatPrice(slide.priceFrom)}</div>
+              <Caption slide={slide} />
             </motion.aside>
           </AnimatePresence>
         </div>
 
         <div className="hero-stage">
-          {heroSlides.map((item, i) => (
-            <motion.div
-              key={item.id}
-              initial={false}
-              animate={poses[i]}
-              transition={{ type: "spring", stiffness: 70, damping: 18, mass: 0.95 }}
-              style={{ position: "absolute" }}
-            >
-              <Cake
-                src={item.image}
-                active={i === active}
-                onSelect={() => {
-                  setActive(i);
-                  setPulse((n) => n + 1);
-                }}
-              />
-            </motion.div>
-          ))}
+          <i className="hero-ring" aria-hidden />
+          <div className="hero-orbit">
+            <AnimatePresence custom={direction}>
+              <motion.div
+                key={slide.id}
+                className="hero-orbit-item"
+                custom={direction}
+                variants={orbit}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ type: "spring", stiffness: 52, damping: 18, mass: 1.05 }}
+              >
+                <Cake src={slide.image} />
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
           <AnimatePresence mode="wait">
             <motion.aside
@@ -148,12 +147,9 @@ export function Hero() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.45 }}
+              transition={{ duration: 0.4 }}
             >
-              <div className="cat">{slide.category}</div>
-              <h2 className="display">{slide.product}</h2>
-              <p>{slide.taste}. {slide.note}</p>
-              <div className="price">от {formatPrice(slide.priceFrom)}</div>
+              <Caption slide={slide} />
             </motion.aside>
           </AnimatePresence>
 

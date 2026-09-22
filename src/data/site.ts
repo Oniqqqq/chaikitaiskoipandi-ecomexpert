@@ -43,6 +43,7 @@ export type HeroSlide = {
 export const PHONE = "+7 (8442) 50-84-08";
 export const PHONE_HREF = "tel:+78442508408";
 export const TELEGRAM = "https://t.me/chai_kitaiskoi_pandi";
+export const VK = "https://vk.com/club24241270";
 export const SITE_NAME = "Чай Китайской Панды";
 
 export const NAV = [
@@ -52,6 +53,33 @@ export const NAV = [
   { label: "Подписка", href: "#subscription" },
   { label: "Чайные", href: "#tearooms" },
   { label: "Франшиза", href: "#franchise" },
+];
+
+export const CATALOG_MENU = [
+  {
+    title: "Магазин",
+    items: [
+      { label: "Чай", href: "#catalog" },
+      { label: "Посуда", href: "#ware" },
+      { label: "Подарки", href: "#gifts" },
+    ],
+  },
+  {
+    title: "Сервис",
+    items: [
+      { label: "Подбор чая", href: "#quiz" },
+      { label: "Подписка", href: "#subscription" },
+      { label: "Чайные", href: "#tearooms" },
+    ],
+  },
+  {
+    title: "О магазине",
+    items: [
+      { label: "Доставка и оплата", href: "#delivery" },
+      { label: "Контакты", href: "#contacts" },
+      { label: "Франшиза", href: "#franchise" },
+    ],
+  },
 ];
 
 export const heroSlides: HeroSlide[] = [
@@ -64,7 +92,7 @@ export const heroSlides: HeroSlide[] = [
     priceFrom: 690,
     image: "/images/cakes/hero-oolong.png",
     tint: "42 38% 46%",
-    href: "#catalog",
+    href: "#hits",
   },
   {
     id: "puer",
@@ -75,7 +103,7 @@ export const heroSlides: HeroSlide[] = [
     priceFrom: 540,
     image: "/images/cakes/hero-puer.png",
     tint: "24 28% 38%",
-    href: "#catalog",
+    href: "http://chaikitaiskoipandi.ru/shupuer/tproduct/922346155-801739348902-puer-shu-mei-hua-bin-2017-g-zimnyaya-sli",
   },
   {
     id: "red",
@@ -86,7 +114,7 @@ export const heroSlides: HeroSlide[] = [
     priceFrom: 930,
     image: "/images/cakes/hero-red.png",
     tint: "8 42% 42%",
-    href: "#catalog",
+    href: "http://chaikitaiskoipandi.ru/redtea",
   },
   {
     id: "white",
@@ -97,7 +125,7 @@ export const heroSlides: HeroSlide[] = [
     priceFrom: 660,
     image: "/images/cakes/hero-white.png",
     tint: "40 18% 52%",
-    href: "#catalog",
+    href: "http://chaikitaiskoipandi.ru/whitetea/tproduct/3313111101-409086970082-bai-hao-in-chzhen-chkp-bin-cha",
   },
 ];
 
@@ -247,8 +275,9 @@ export const rooms = [
     hours: "Круглосуточно",
     phone: "+7 (8442) 50-84-08",
     phoneHref: "tel:+78442508408",
-    x: 28,
-    y: 62,
+    lon: 44.5092,
+    lat: 48.7072,
+    photo: "/images/rooms/loft-1.jpg",
   },
   {
     id: "vtc",
@@ -258,8 +287,9 @@ export const rooms = [
     hours: "10:00–22:00",
     phone: "+7 (8442) 50-42-04",
     phoneHref: "tel:+78442504204",
-    x: 36,
-    y: 74,
+    lon: 44.5164,
+    lat: 48.6991,
+    photo: "/images/rooms/table-panda.jpg",
   },
   {
     id: "park",
@@ -269,8 +299,9 @@ export const rooms = [
     hours: "10:00–22:00",
     phone: "+7 (8442) 50-04-34",
     phoneHref: "tel:+78442500434",
-    x: 22,
-    y: 48,
+    lon: 44.5486,
+    lat: 48.7462,
+    photo: "/images/rooms/loft-cover.jpg",
   },
   {
     id: "zorge",
@@ -280,8 +311,9 @@ export const rooms = [
     hours: "12:00–22:00",
     phone: "+7 (904) 777-77-51",
     phoneHref: "tel:+79047777751",
-    x: 68,
-    y: 34,
+    lon: 37.5074,
+    lat: 55.7768,
+    photo: "/images/rooms/zorge.jpg",
   },
   {
     id: "stolyarny",
@@ -291,8 +323,9 @@ export const rooms = [
     hours: "12:00–22:00",
     phone: "+7 (985) 519-31-70",
     phoneHref: "tel:+79855193170",
-    x: 78,
-    y: 46,
+    lon: 37.5708,
+    lat: 55.7634,
+    photo: "/images/categories/ware.jpg",
   },
 ];
 

@@ -1,23 +1,33 @@
+import { useState } from "react";
 import { categories, products } from "../data/site";
 import { ProductCard } from "./ProductCard";
 
 export function Categories() {
+  const [hot, setHot] = useState<string | null>(null);
+
   return (
     <section className="section" id="catalog">
       <div className="wrap">
         <div className="section-head">
-          <div>
-            <p className="kicker">03 / Ассортимент</p>
-            <h2 className="display">Сначала материал, потом полка</h2>
-          </div>
-          <p>Крупные входы в категории — продолжение hero: реальный лист, блины, посуда. Без декоративного шума.</p>
+          <h2 className="display">Категории</h2>
         </div>
-        <div className="cat-grid">
+        <div
+          className={`cat-grid${hot ? ` is-${hot}` : ""}`}
+          onMouseLeave={() => setHot(null)}
+        >
           {categories.map((cat) => (
-            <a className="cat-tile" key={cat.id} href={cat.href} id={cat.id === "ware" ? "ware" : cat.id === "gifts" ? "gifts" : undefined}>
+            <a
+              className={`cat-tile tile-${cat.id}`}
+              key={cat.id}
+              href={cat.href}
+              id={cat.id === "ware" ? "ware" : cat.id === "gifts" ? "gifts" : undefined}
+              onMouseEnter={() => setHot(cat.id)}
+            >
               <img src={cat.image} alt="" />
-              <strong>{cat.title}</strong>
-              <span>{cat.count}</span>
+              <div className="parchment parchment-tile">
+                <strong>{cat.title}</strong>
+                <span>{cat.count}</span>
+              </div>
             </a>
           ))}
         </div>
@@ -28,15 +38,14 @@ export function Categories() {
 
 export function Showcase() {
   return (
-    <section className="section" id="hits" style={{ paddingTop: 0 }}>
+    <section className="section" id="catalog">
+      <span id="hits" hidden />
+      <span id="ware" hidden />
+      <span id="gifts" hidden />
       <div className="wrap">
-        <div className="sheet showcase-sheet">
+        <div className="showcase-sheet">
           <div className="section-head">
-            <div>
-              <p className="kicker">04 / Витрина</p>
-              <h2 className="display">Хиты и состояния карточек</h2>
-            </div>
-            <p>Здесь интерфейс спокойнее hero. Цена — за минимальную фасовку, переключатель меняет её сразу.</p>
+            <h2 className="display">Сейчас на полке</h2>
           </div>
           <div className="cards">
             {products.map((product) => (

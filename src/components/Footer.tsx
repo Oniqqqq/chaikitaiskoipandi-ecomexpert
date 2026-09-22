@@ -1,4 +1,4 @@
-import { legal, NAV, PHONE, PHONE_HREF, rooms, TELEGRAM } from "../data/site";
+import { legal, NAV, PHONE, PHONE_HREF, rooms, TELEGRAM, VK } from "../data/site";
 
 export function Footer() {
   return (
@@ -19,6 +19,12 @@ export function Footer() {
                   <a href={item.href}>{item.label}</a>
                 </li>
               ))}
+              <li>
+                <a href="#delivery">Доставка и оплата</a>
+              </li>
+              <li>
+                <a href="#contacts">Контакты</a>
+              </li>
             </ul>
           </div>
           <div>
@@ -31,7 +37,7 @@ export function Footer() {
               ))}
             </ul>
           </div>
-          <div id="franchise">
+          <div id="contacts">
             <h4>Связь</h4>
             <ul>
               <li>
@@ -43,6 +49,11 @@ export function Footer() {
                 </a>
               </li>
               <li>
+                <a href={VK} target="_blank" rel="noreferrer">
+                  ВКонтакте
+                </a>
+              </li>
+              <li id="franchise">
                 <a href="#franchise">Франшиза</a>
               </li>
               <li>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { formatPrice, quizQuestions, recommendTeas } from "../data/site";
+import { IconArrowShort } from "./Icons";
 
 export function Quiz() {
   const [step, setStep] = useState(0);
@@ -8,6 +9,7 @@ export function Quiz() {
   const [done, setDone] = useState(false);
   const question = quizQuestions[step];
   const results = done ? recommendTeas(answers) : [];
+  const filled = done ? quizQuestions.length : step;
 
   const choose = (id: string) => {
     const next = { ...answers, [question.id]: id };
@@ -20,77 +22,87 @@ export function Quiz() {
     <section className="section" id="quiz">
       <div className="wrap">
         <div className="section-head">
-          <div>
-            <p className="kicker">02 / Подбор</p>
-            <h2 className="display">Пять коротких вопросов — и чай на столе</h2>
-          </div>
-          <p>Блок независимый: его можно убрать, страница останется целой. Для новичка — без специальных терминов.</p>
+          <h2 className="display">Пять коротких вопросов, и чай на столе</h2>
         </div>
-        <div className="sheet quiz-shell">
+        <div className={`quiz-shell${done ? " is-done" : ""}`}>
+          <div className="quiz-top">
+            <div className="quiz-progress" aria-hidden>
+              {quizQuestions.map((q, i) => (
+                <span
+                  key={q.id}
+                  className={`quiz-seg${i < filled ? " is-done" : ""}${!done && i === step ? " is-now" : ""}${done ? " is-done" : ""}`}
+                >
+                  <i />
+                </span>
+              ))}
+            </div>
+            <div className="quiz-meta">
+              <span>{done ? "Подборка готова" : `Вопрос ${String(step + 1).padStart(2, "0")}`}</span>
+              <span>
+                {done ? quizQuestions.length : step + 1} / {quizQuestions.length}
+              </span>
+            </div>
+          </div>
+
           {!done ? (
             <>
-              <div>
-                <p className="kicker">
-                  Вопрос {step + 1} из {quizQuestions.length}
-                </p>
-                <div className="quiz-progress">
-                  {quizQuestions.map((q, i) => (
-                    <i key={q.id} className={i <= step ? "on" : ""} />
-                  ))}
-                </div>
-              </div>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={question.id}
-                  initial={{ opacity: 0, y: 12 }}
+                  className="quiz-body"
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.35 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <h3 className="display" style={{ fontSize: 40, margin: "0 0 22px" }}>
-                    {question.title}
-                  </h3>
+                  <h3>{question.title}</h3>
                   <div className="quiz-options">
-                    {question.options.map((opt) => (
-                      <button
+                    {question.options.map((opt, i) => (
+                      <motion.button
                         key={opt.id}
+                        type="button"
                         className={`quiz-option${answers[question.id] === opt.id ? " is-on" : ""}`}
                         onClick={() => choose(opt.id)}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.06 + i * 0.05, ease: [0.22, 1, 0.36, 1] }}
                       >
-                        <b>{opt.label}</b>
-                        <span>{opt.hint}</span>
-                      </button>
+                        <em />
+                        <span>
+                          <b>{opt.label}</b>
+                          <small>{opt.hint}</small>
+                        </span>
+                      </motion.button>
                     ))}
                   </div>
                 </motion.div>
               </AnimatePresence>
               <div className="quiz-nav">
-                <button className="btn-line" disabled={step === 0} onClick={() => setStep((s) => Math.max(0, s - 1))}>
+                <button className="text-link" disabled={step === 0} onClick={() => setStep((s) => Math.max(0, s - 1))}>
                   Назад
                 </button>
-                <span style={{ color: "var(--mute)" }}>Один вопрос на экран</span>
+                <span className="quiz-count">выберите один ответ</span>
               </div>
             </>
           ) : (
-            <div>
-              <p className="kicker">Результат</p>
-              <h3 className="display" style={{ fontSize: 40, margin: "10px 0 8px" }}>
-                Четыре чая, которые легли в ваши ответы
-              </h3>
-              <p style={{ color: "var(--ink-soft)", marginTop: 0 }}>Без обещаний про здоровье — только вкус, плотность и привычный способ заваривания.</p>
+            <div className="quiz-done">
+              <h3>Вот что подошло</h3>
               <div className="quiz-results">
                 {results.map(({ product, why }) => (
                   <article className="quiz-card" key={product.id}>
                     <img src={product.image} alt="" />
-                    <h3>{product.name}</h3>
-                    <p>Потому что: {why}</p>
-                    <p style={{ marginTop: 10 }}>от {formatPrice(product.packs[0].price)}</p>
+                    <div>
+                      <small>{product.category}</small>
+                      <h4>{product.name}</h4>
+                      <p>{why}</p>
+                      <span>от {formatPrice(product.packs[0].price)}</span>
+                    </div>
                   </article>
                 ))}
               </div>
               <div className="quiz-nav">
                 <button
-                  className="btn-line"
+                  className="text-link"
                   onClick={() => {
                     setDone(false);
                     setStep(0);
@@ -100,7 +112,7 @@ export function Quiz() {
                   Пройти ещё раз
                 </button>
                 <a className="btn btn-primary" href="#catalog">
-                  Смотреть в витрине
+                  Смотреть в витрине <IconArrowShort />
                 </a>
               </div>
             </div>
